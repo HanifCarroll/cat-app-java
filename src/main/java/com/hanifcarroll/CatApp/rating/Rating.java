@@ -1,8 +1,8 @@
 package com.hanifcarroll.CatApp.rating;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 import com.hanifcarroll.CatApp.cat.Cat;
+import com.hanifcarroll.CatApp.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -11,19 +11,21 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="ratings")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-//    @ManyToOne
-//    @JoinColumn(foreignKey = @ForeignKey(name = "FK_USER_ID"))
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey(name = "FK_USER_ID"))
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( foreignKey = @ForeignKey(name = "FK_CAT_ID"))
-    @JsonIgnoreProperties("ratings")
     private Cat cat;
 
     @NotNull
@@ -66,6 +68,7 @@ public class Rating {
     public String toString() {
         return "Rating{" +
                 "id=" + id +
+                ", user=" + user +
                 ", cat=" + cat +
                 ", value=" + value +
                 '}';

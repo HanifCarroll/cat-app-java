@@ -1,8 +1,9 @@
 package com.hanifcarroll.CatApp.cat;
 
+import com.hanifcarroll.CatApp.user.User;
+import com.hanifcarroll.CatApp.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -13,7 +14,10 @@ public class CatController {
     @Autowired
     private CatRepository catRepository;
 
-    @GetMapping("")
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping("/")
     public Iterable<Cat> listAll() {
         return catRepository.findAll();
     }
@@ -23,14 +27,19 @@ public class CatController {
         return catRepository.findById(id);
     }
 
-    @PostMapping("")
-    public String create(String name, String description, String pictureURL) {
+    @PostMapping("/")
+    public String create(String name, String description, String pictureURL, long ownerId) {
         String catId = "";
 
         try {
-            Cat cat = new Cat(name, description, pictureURL);
+            Optional<User> owner = userRepository.findById(ownerId);
 
-            System.out.println(cat);
+            if (!owner.isPresent()) {
+                return "User with that ID not found.";
+            }
+
+            User foundOwner = owner.get();
+            Cat cat = new Cat(name, description, pictureURL, foundOwner);
 
             catRepository.save(cat);
 
