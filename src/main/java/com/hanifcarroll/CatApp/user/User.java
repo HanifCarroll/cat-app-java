@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name="users", uniqueConstraints={@UniqueConstraint(columnNames = {"email"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -21,8 +21,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
-    private int role;
 
     @NotNull
     private String username;
@@ -38,8 +36,6 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Rating> ratings;
-
-    //private Collection<Role> roles;
 
     public User() {}
 
@@ -63,14 +59,6 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public int getRole() {
-        return role;
-    }
-
-    public void setRole(int role) {
-        this.role = role;
     }
 
     public String getUsername() {

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-@Service
+@Service("userDetailsService")
 @Transactional
 public class MyUserDetailsService implements UserDetailsService {
 
@@ -20,22 +22,13 @@ public class MyUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
 
-        User user = userRepository.findFirstByUsername(username);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(
-                    "No user found with username: "+ username);
+            throw new UsernameNotFoundException(email);
         }
-
         return new MyUserPrincipal(user);
-    }
-
-    private static List<GrantedAuthority> getAuthorities (List<String> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        return authorities;
     }
 }

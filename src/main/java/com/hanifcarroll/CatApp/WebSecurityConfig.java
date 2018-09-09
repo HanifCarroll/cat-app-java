@@ -44,25 +44,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable();
 
         httpSecurity.httpBasic().and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/cats/*").permitAll()
-                .antMatchers("/api/cats/*").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/users/").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/cats/**").permitAll()
+                .antMatchers("/api/cats/*").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/register/").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/users/").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/users/*").hasRole("USER")
-                .antMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PATCH, "/api/users/*").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+                //.antMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/api/users/*").authenticated()
                 .and()
                 .formLogin()
                 .loginProcessingUrl("/login");
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
-        //String password = passwordEncoder().encode("password");
-        auth.inMemoryAuthentication()
-                .withUser("user").password("password").roles("USER");
-        auth.inMemoryAuthentication()
-                .withUser("admin").password("password").roles("ADMIN", "USER");
-    }
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
+//        String password = passwordEncoder().encode("password");
+//        auth.inMemoryAuthentication()
+//                .withUser("user").password(password).roles("USER");
+//        auth.inMemoryAuthentication()
+//                .withUser("admin").password("password").roles("ADMIN", "USER");
+//    }
 }

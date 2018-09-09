@@ -6,8 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Transactional
 public interface UserRepository extends CrudRepository<User, Long> {
 
@@ -20,7 +18,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
             @Param("password") String password
     );
 
-    User findFirstByUsername(String username);
+    User findByUsername(String username);
 
-    User findFirstByEmail(String email);
+    User findByEmail(String email);
 }

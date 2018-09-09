@@ -1,14 +1,22 @@
 package com.hanifcarroll.CatApp.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserService {
 
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserService(UserRepository  userRepository) {
@@ -24,11 +32,11 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findFirstByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public User findByUsername(String username) {
-        return userRepository.findFirstByUsername(username);
+        return userRepository.findByUsername(username);
     }
 
     public void updateUser(long id, String username, String email, String password) {
@@ -43,5 +51,15 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public void registerUser(String username, String email, String password) {
+        User user = new User();
 
+        user.setUsername(username);
+
+        user.setEmail(email);
+
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+
+        userRepository.save(user);
+    }
 }
